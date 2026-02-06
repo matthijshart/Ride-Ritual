@@ -1,0 +1,1555 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MONTGÓ RIDE — Cycling Studio Jávea / Xàbia</title>
+  <meta name="description" content="MONTGÓ RIDE — 45-min sunrise cycling in Jávea / Xàbia. Boek je bike. Sweat. Shower. Beach." />
+  <meta name="theme-color" content="#ff2a7a" />
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* RecoveryPass-ish sunrise palette + sea accent */
+      --c1: #ff2a7a;   /* pink */
+      --c2: #ff4a22;   /* orange-red */
+      --c3: #ffb000;   /* amber */
+      --sea:#26e3d2;   /* sea accent */
+      --w:  rgba(255,255,255,.96);
+      --wm: rgba(255,255,255,.82);
+      --wf: rgba(255,255,255,.62);
+
+      --glass:  rgba(255,255,255,.14);
+      --glass2: rgba(255,255,255,.22);
+      --stroke: rgba(255,255,255,.30);
+      --shadow: 0 22px 70px rgba(0,0,0,.20);
+      --shadow2: 0 14px 30px rgba(0,0,0,.16);
+      --radius: 26px;
+
+      /* Wave pattern (subtiel) */
+      --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='white' stroke-opacity='.18' stroke-width='2'%3E%3Cpath d='M0 60 C30 40 70 40 100 60 C130 80 170 80 200 60'/%3E%3Cpath d='M0 100 C30 80 70 80 100 100 C130 120 170 120 200 100'/%3E%3Cpath d='M0 140 C30 120 70 120 100 140 C130 160 170 160 200 140'/%3E%3C/g%3E%3C/svg%3E");
+
+      /* Images (vervang gerust) */
+      --img-ride: url('https://images.unsplash.com/photo-1520877880798-5ee004e3f11e?auto=format&fit=crop&fm=jpg&q=60&w=2200');
+      --img-bikes: url('https://images.unsplash.com/photo-1760031670160-4da44e9596d0?auto=format&fit=crop&fm=jpg&q=60&w=2200');
+      --img-javea: url('https://images.unsplash.com/photo-1679921381501-71c080912d2c?fm=jpg&ixlib=rb-4.0.3&q=60&w=2200');
+      --img-xabia: url('https://images.unsplash.com/photo-1693155118904-f588ba4ff6d4?fm=jpg&ixlib=rb-4.0.3&q=60&w=2200');
+      --img-bike-close: url('https://images.unsplash.com/photo-1625594755684-a73285a64f66?auto=format&fit=crop&fm=jpg&q=60&w=2200');
+    }
+
+    *{ box-sizing: border-box; }
+    html{ scroll-behavior: smooth; }
+    body{
+      margin: 0;
+      font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--w);
+      overflow-x: hidden;
+
+      background: linear-gradient(120deg, var(--c1), var(--c2), var(--c3));
+      background-size: 220% 220%;
+      animation: bgShift 12s ease-in-out infinite;
+    }
+
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background-image: var(--pattern);
+      background-size: 220px 220px;
+      opacity: .14;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+    body::after{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1000px 700px at 18% 10%, rgba(255,255,255,.20), transparent 55%),
+        radial-gradient(900px 650px at 85% 8%, rgba(38,227,210,.20), transparent 58%),
+        radial-gradient(1000px 700px at 70% 90%, rgba(0,0,0,.10), transparent 60%);
+      pointer-events: none;
+    }
+
+    @keyframes bgShift{
+      0%{ background-position: 0% 40%; }
+      50%{ background-position: 100% 60%; }
+      100%{ background-position: 0% 40%; }
+    }
+
+    a{ color: inherit; text-decoration: none; }
+    .container{
+      width: min(1120px, calc(100% - 44px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 4;
+    }
+
+    /* Cursor glow */
+    .cursor-glow{
+      position: fixed;
+      inset: 0 auto auto 0;
+      width: 520px;
+      height: 520px;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), transparent 60%);
+      filter: blur(10px);
+      mix-blend-mode: soft-light;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity .25s ease;
+    }
+    body:hover .cursor-glow{ opacity: .95; }
+
+    /* Floating blobs */
+    .blobs{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .blob{
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: .34;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), transparent 60%);
+      mix-blend-mode: soft-light;
+      animation: float 16s ease-in-out infinite;
+    }
+    .blob.b1{ top: -120px; left: -120px; animation-duration: 18s; }
+    .blob.b2{ top: 30%; right: -160px; width: 640px; height: 640px; opacity: .28; animation-duration: 20s; }
+    .blob.b3{ bottom: -240px; left: 26%; width: 820px; height: 820px; opacity: .22; animation-duration: 22s; }
+    @keyframes float{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(40px, -30px, 0) scale(1.06); }
+    }
+
+    /* Topbar */
+    header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 0;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.18);
+    }
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+    }
+    .logo{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 900;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+    .mark{
+      width: 34px; height: 34px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.22);
+      border: 1px solid rgba(255,255,255,.35);
+      box-shadow: var(--shadow2);
+      position: relative;
+      overflow: hidden;
+    }
+    .mark::before{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background: linear-gradient(120deg, rgba(255,255,255,.85), rgba(255,255,255,0));
+      transform: rotate(25deg);
+      opacity: .55;
+    }
+
+    nav.links{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: var(--wm);
+    }
+    nav.links a{
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: background .2s ease, transform .2s ease;
+    }
+    nav.links a:hover{ background: rgba(255,255,255,.12); transform: translateY(-1px); }
+
+    .actions{ display:flex; gap: 10px; align-items:center; }
+
+    .btn{
+      position: relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.34);
+      background: rgba(255,255,255,.12);
+      color: var(--w);
+      font-weight: 900;
+      letter-spacing: .2px;
+      cursor:pointer;
+      transform: translateZ(0);
+      transition: transform .18s ease, background .2s ease, border-color .2s ease;
+      box-shadow: 0 16px 30px rgba(0,0,0,.12);
+      user-select: none;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.55);
+    }
+    .btn:active{ transform: translateY(0); }
+
+    .btn.primary{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.60);
+    }
+    .btn.sea{
+      background: rgba(38,227,210,.20);
+      border-color: rgba(38,227,210,.55);
+    }
+
+    /* shimmer */
+    .btn::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.40) 45%, transparent 70%);
+      transform: translateX(-120%);
+      opacity: 0;
+      pointer-events:none;
+    }
+    .btn:hover::after{
+      opacity: .8;
+      animation: shimmer .9s ease;
+    }
+    @keyframes shimmer{
+      0%{ transform: translateX(-120%); }
+      100%{ transform: translateX(120%); }
+    }
+
+    .burger{
+      display:none;
+      width:46px; height:46px;
+      border-radius:999px;
+      border: 1px solid rgba(255,255,255,.34);
+      background: rgba(255,255,255,.12);
+      color: var(--w);
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+    .burger svg{ width:22px; height:22px; }
+
+    .mobile{
+      display:none;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.18);
+    }
+    .mobile a{
+      display:block;
+      padding: 12px 12px;
+      border-radius: 14px;
+      color: var(--wm);
+      font-weight: 850;
+    }
+    .mobile a:hover{ background: rgba(255,255,255,.12); color: var(--w); }
+
+    /* Hero */
+    .hero{
+      position: relative;
+      padding: 72px 0 34px 0;
+      z-index: 5;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 18px;
+      align-items:center;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.28);
+      font-weight: 900;
+      letter-spacing: .25px;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+    .spark{
+      width: 8px; height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 0 0 8px rgba(255,255,255,.16);
+    }
+
+    h1{
+      margin: 14px 0 10px 0;
+      font-size: clamp(44px, 6.6vw, 86px);
+      line-height: .95;
+      letter-spacing: -1.2px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+    .sub{
+      margin: 0;
+      font-size: 18px;
+      font-weight: 650;
+      color: var(--wm);
+      max-width: 55ch;
+    }
+
+    .cta{
+      margin-top: 18px;
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    .mini{
+      margin-top: 16px;
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--wf);
+      font-weight: 900;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .mini span{
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    /* Hero art frames */
+    .art{ position: relative; min-height: 450px; }
+    .frame{
+      position:absolute;
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(255,255,255,.32);
+      background: rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform-style: preserve-3d;
+    }
+    .frame::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(900px 420px at 30% 20%, rgba(255,255,255,.25), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.28));
+      pointer-events:none;
+      z-index:2;
+    }
+
+    .frame.one{
+      inset: 0 0 auto auto;
+      width: min(440px, 95%);
+      height: 310px;
+      transform: rotate(2.5deg);
+      background-image: var(--img-ride);
+      background-size: cover;
+      background-position: center;
+      animation: frameFloat 7.5s ease-in-out infinite;
+    }
+    .frame.two{
+      left: 0;
+      bottom: 0;
+      width: min(380px, 90%);
+      height: 270px;
+      transform: rotate(-4deg);
+      background-image: var(--img-javea);
+      background-size: cover;
+      background-position: center;
+      animation: frameFloat2 8.5s ease-in-out infinite;
+    }
+    .badge{
+      position:absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 3;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(38,227,210,.20);
+      border: 1px solid rgba(38,227,210,.55);
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      font-size: 12px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 45px rgba(0,0,0,.14);
+    }
+
+    @keyframes frameFloat{
+      0%,100%{ transform: translateY(0) rotate(2.5deg); }
+      50%{ transform: translateY(-10px) rotate(1.2deg); }
+    }
+    @keyframes frameFloat2{
+      0%,100%{ transform: translateY(0) rotate(-4deg); }
+      50%{ transform: translateY(12px) rotate(-2.8deg); }
+    }
+
+    /* Marquee */
+    .marquee{
+      margin-top: 36px;
+      border-top: 1px solid rgba(255,255,255,.22);
+      border-bottom: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .track{
+      display:flex;
+      gap: 22px;
+      padding: 14px 0;
+      white-space: nowrap;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      color: rgba(255,255,255,.90);
+      animation: scroll 18s linear infinite;
+    }
+    @keyframes scroll{
+      0%{ transform: translateX(0); }
+      100%{ transform: translateX(-50%); }
+    }
+
+    /* Sections */
+    .section{
+      padding: 70px 0;
+      position: relative;
+      z-index: 5;
+    }
+    .section h2{
+      margin: 0 0 14px 0;
+      font-size: clamp(28px, 3.8vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+    .hint{
+      margin: 0;
+      color: var(--wm);
+      font-weight: 650;
+      max-width: 64ch;
+    }
+
+    .grid3{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: var(--shadow2);
+      padding: 18px;
+      transform-style: preserve-3d;
+      backdrop-filter: blur(16px);
+      transition: transform .18s ease, background .2s ease, border-color .2s ease;
+    }
+    .card:hover{
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.45);
+      transform: translateY(-2px);
+    }
+    .tag{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      font-size: 12px;
+      color: rgba(255,255,255,.90);
+    }
+    .tag i{
+      width: 9px; height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 0 0 9px rgba(255,255,255,.14);
+      display:inline-block;
+    }
+    .tag i.sea{
+      background: rgba(38,227,210,.95);
+      box-shadow: 0 0 0 9px rgba(38,227,210,.18);
+    }
+    .card p{
+      margin: 10px 0 0 0;
+      color: var(--wm);
+      font-weight: 650;
+    }
+
+    /* Schedule */
+    .schedule{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .panel{
+      border-radius: calc(var(--radius) + 6px);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(18px);
+      overflow:hidden;
+    }
+
+    .filters{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .chip{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.26);
+      background: rgba(255,255,255,.10);
+      font-weight: 900;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--wm);
+      cursor: pointer;
+      user-select:none;
+      transition: background .2s ease, border-color .2s ease, transform .18s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.40); }
+    .chip.on{
+      color: var(--w);
+      background: rgba(38,227,210,.18);
+      border-color: rgba(38,227,210,.55);
+    }
+
+    .classes{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .class{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 12px 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .class .left{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      min-width: 0;
+    }
+    .time{
+      font-weight: 950;
+      letter-spacing: .3px;
+      font-size: 16px;
+      min-width: 62px;
+    }
+    .meta{
+      min-width: 0;
+    }
+    .meta strong{
+      display:block;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .25px;
+      font-size: 12px;
+    }
+    .meta span{
+      display:block;
+      color: var(--wm);
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 38ch;
+    }
+    .spot{
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.10);
+    }
+
+    .side-visual{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      background:
+        radial-gradient(900px 420px at 20% 10%, rgba(38,227,210,.18), transparent 60%),
+        rgba(255,255,255,.10);
+    }
+    .side-visual .img{
+      height: 220px;
+      background-image: var(--img-bikes);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .side-visual .img::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.30));
+    }
+    .side-visual .copy{
+      padding: 16px;
+    }
+    .side-visual .copy h3{
+      margin: 0 0 8px 0;
+      font-weight: 950;
+      letter-spacing: -0.3px;
+      text-transform: uppercase;
+      font-size: 18px;
+    }
+    .side-visual .copy p{
+      margin: 0;
+      color: var(--wm);
+      font-weight: 650;
+      line-height: 1.45;
+    }
+    .list{
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .list div{
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+      color: var(--wm);
+      font-weight: 750;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .list b{ color: rgba(255,255,255,.92); }
+
+    /* Packs */
+    .plans{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .plan{
+      border-radius: calc(var(--radius) + 6px);
+      padding: 18px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.30);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(18px);
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .plan.featured{
+      background:
+        radial-gradient(700px 420px at 20% 10%, rgba(38,227,210,.18), transparent 60%),
+        rgba(255,255,255,.13);
+      border-color: rgba(38,227,210,.55);
+    }
+    .plan .name{
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      font-size: 13px;
+      opacity: .95;
+    }
+    .price{
+      margin: 10px 0 10px 0;
+      display:flex;
+      align-items:baseline;
+      gap: 10px;
+    }
+    .price strong{
+      font-size: 44px;
+      line-height: 1;
+      letter-spacing: -1px;
+      font-weight: 950;
+    }
+    .price span{
+      color: var(--wm);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .35px;
+      font-size: 12px;
+    }
+    .bullets{
+      margin: 10px 0 0 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap: 10px;
+      color: var(--wm);
+      font-weight: 750;
+    }
+    .bullets li{
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .plan .plan-cta{
+      margin-top: 14px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    /* Location */
+    .loc{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .map{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-height: 360px;
+    }
+    .map iframe{ width:100%; height:100%; border:0; filter: saturate(1.05) contrast(1.05); }
+
+    .loc-card{
+      border-radius: calc(var(--radius) + 6px);
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction: column;
+    }
+    .loc-card .img{
+      height: 180px;
+      background-image: var(--img-xabia);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .loc-card .img::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.32));
+    }
+    .loc-card .body{
+      padding: 16px;
+      display:grid;
+      gap: 10px;
+    }
+    .loc-card h3{
+      margin: 0;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .25px;
+      font-size: 18px;
+    }
+    .loc-card p{ margin: 0; color: var(--wm); font-weight: 650; line-height: 1.45; }
+
+    /* Join */
+    .join{
+      border-radius: calc(var(--radius) + 10px);
+      padding: 20px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.34);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      align-items:center;
+    }
+    .join h2{ margin-bottom: 8px; }
+    .join p{ margin: 0; color: var(--wm); font-weight: 650; }
+
+    form{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    input{
+      flex: 1 1 220px;
+      padding: 14px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.36);
+      background: rgba(255,255,255,.12);
+      color: var(--w);
+      font-weight: 850;
+      outline: none;
+    }
+    input::placeholder{ color: rgba(255,255,255,.70); }
+
+    footer{
+      padding: 26px 0 44px 0;
+      color: rgba(255,255,255,.70);
+      font-weight: 650;
+      position: relative;
+      z-index: 5;
+    }
+    .foot{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    /* Reveal */
+    .reveal{
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.in{ opacity: 1; transform: translateY(0); }
+
+    /* Magnetic / Tilt */
+    .magnetic{ --mx: 0px; --my: 0px; transform: translate(var(--mx), var(--my)); will-change: transform; }
+    .tilt{ transform: perspective(900px) rotateX(0deg) rotateY(0deg); will-change: transform; }
+
+    /* Modal */
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 999;
+      padding: 18px;
+    }
+    .modal{
+      width: min(560px, 100%);
+      border-radius: calc(var(--radius) + 10px);
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.34);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .top{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+    }
+    .modal .top strong{
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      font-size: 12px;
+    }
+    .x{
+      width: 42px; height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.10);
+      color: var(--w);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 950;
+    }
+    .modal .body{
+      padding: 16px;
+      display:grid;
+      gap: 12px;
+    }
+    .modal .summary{
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.22);
+      color: var(--wm);
+      font-weight: 750;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .modal .summary b{ color: rgba(255,255,255,.95); }
+    .modal .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .modal .row input{ flex: unset; }
+
+    /* Responsive */
+    @media (max-width: 920px){
+      nav.links{ display:none; }
+      .burger{ display:inline-flex; }
+      .hero-grid{ grid-template-columns: 1fr; }
+      .art{ min-height: 360px; }
+      .frame.one{ width: 100%; height: 280px; }
+      .frame.two{ width: 88%; height: 240px; }
+      .grid3{ grid-template-columns: 1fr; }
+      .schedule{ grid-template-columns: 1fr; }
+      .plans{ grid-template-columns: 1fr; }
+      .loc{ grid-template-columns: 1fr; }
+      .join{ grid-template-columns: 1fr; }
+      form{ justify-content: stretch; }
+      .modal .row{ grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior: auto; }
+      body{ animation: none; }
+      .track{ animation: none; transform: none; }
+      .blob{ animation: none; }
+      .frame.one, .frame.two{ animation: none; }
+      .reveal{ opacity: 1; transform: none; transition: none; }
+      .cursor-glow{ display:none; }
+      .btn::after{ animation: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="blobs" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <header id="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="logo" href="#top">
+          <span class="mark" aria-hidden="true"></span>
+          <span>MONTGÓ RIDE</span>
+        </a>
+
+        <nav class="links" aria-label="Navigatie">
+          <a href="#how">How</a>
+          <a href="#schedule">Schedule</a>
+          <a href="#packs">Packs</a>
+          <a href="#location">Xàbia</a>
+          <a href="#join">Join</a>
+        </nav>
+
+        <div class="actions">
+          <a class="btn magnetic" href="#schedule">Boek</a>
+          <a class="btn primary magnetic" href="#packs">Packs</a>
+          <a class="btn sea magnetic" href="#join">Waitlist</a>
+
+          <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile" id="mobile">
+        <a href="#how">How</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#packs">Packs</a>
+        <a href="#location">Xàbia</a>
+        <a href="#join">Join</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" style="position:relative; z-index:4;">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="pill"><span class="spark" aria-hidden="true"></span> Jávea / Xàbia • Sunrise rides • 45'</div>
+
+          <h1>Ride.<br>Before<br>The Day.</h1>
+
+          <p class="sub">
+            Boek vroeg. Ride 45 minuten. Douche. En dan: strand, lunch, wijn.  
+            <strong>Blijf strak</strong> terwijl je blijft genieten.
+          </p>
+
+          <div class="cta">
+            <a class="btn primary magnetic" href="#schedule">Boek je sunrise ride</a>
+            <button class="btn sea magnetic" id="openWaitlistTop">Join waitlist</button>
+          </div>
+
+          <div class="mini" aria-label="Highlights">
+            <span>45 min</span>
+            <span>music-led</span>
+            <span>beginner friendly</span>
+            <span>showers</span>
+            <span>Jávea / Xàbia</span>
+          </div>
+        </div>
+
+        <div class="art reveal">
+          <div class="frame one tilt" aria-label="Cycling class visual">
+            <div class="badge">SUNRISE • SWEAT • SEA</div>
+          </div>
+          <div class="frame two tilt" aria-label="Jávea visual"></div>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="track">
+          <span>SUNRISE • 45 MIN • JÁVEA / XÀBIA • MUSIC-LED • SWEAT • SHOWER • BEACH •</span>
+          <span>SUNRISE • 45 MIN • JÁVEA / XÀBIA • MUSIC-LED • SWEAT • SHOWER • BEACH •</span>
+          <span>SUNRISE • 45 MIN • JÁVEA / XÀBIA • MUSIC-LED • SWEAT • SHOWER • BEACH •</span>
+          <span>SUNRISE • 45 MIN • JÁVEA / XÀBIA • MUSIC-LED • SWEAT • SHOWER • BEACH •</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container reveal">
+        <h2>Simple. Fast. Addictive.</h2>
+        <p class="hint">
+          Ik mik op één ding: een strak ritueel dat in je vakantie past. Je boekt. Je rijdt. Je bent klaar vóór de dag begint.
+        </p>
+
+        <div class="grid3">
+          <div class="card tilt">
+            <div class="tag"><i class="sea"></i> Boek je bike</div>
+            <p>Kies een sunrise slot. 07:00–09:15 is de sweet spot.</p>
+          </div>
+          <div class="card tilt">
+            <div class="tag"><i></i> 45' ride</div>
+            <p>Intervals, vibe, playlist. Geen gedoe. Wel output.</p>
+          </div>
+          <div class="card tilt">
+            <div class="tag"><i class="sea"></i> Douche + door</div>
+            <p>Stranddag, padel, tapas. Jij voelt je al “done”.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="schedule">
+      <div class="container reveal">
+        <h2>Schedule</h2>
+        <p class="hint">Early rides (zomer). Extra slots komen erbij als het volloopt.</p>
+
+        <div class="schedule">
+          <div class="panel tilt">
+            <div class="filters" id="dayFilters" aria-label="Dagen filter"></div>
+            <div class="classes" id="classes"></div>
+          </div>
+
+          <aside class="side-visual tilt" aria-label="Info">
+            <div class="img" role="img" aria-label="Studio bikes"></div>
+            <div class="copy">
+              <h3>Wat je krijgt</h3>
+              <p>
+                Donkere studio. Hard geluid. Heldere coaching.  
+                En toch: relaxed. Je hoeft niet “fit” te zijn om te starten.
+              </p>
+              <div class="list">
+                <div><span><b>Schoenen</b> (SPD) beschikbaar</span><span class="spot">€3 rental</span></div>
+                <div><span><b>Douche</b> + lockers</span><span class="spot">included</span></div>
+                <div><span><b>Beginner ride</b> elke week</span><span class="spot">new</span></div>
+              </div>
+              <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn primary magnetic" id="bookNextBtn">Boek eerstvolgende</button>
+                <a class="btn magnetic" href="#packs">Bekijk packs</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="packs">
+      <div class="container reveal">
+        <h2>Packs</h2>
+        <p class="hint">Klein, duidelijk. Perfect voor “ik ben hier 2–6 weken”.</p>
+
+        <div class="plans">
+          <article class="plan tilt">
+            <div class="name">Drop-in</div>
+            <div class="price"><strong>€18</strong><span>per ride</span></div>
+            <ul class="bullets">
+              <li>1× 45' ride</li>
+              <li>Voor spontane ochtenden</li>
+              <li>Cancel tot 12 uur vóór start</li>
+            </ul>
+            <div class="plan-cta">
+              <button class="btn primary magnetic" data-pickpack="Drop-in">Kies Drop-in</button>
+              <a class="btn magnetic" href="#schedule">Boek</a>
+            </div>
+          </article>
+
+          <article class="plan featured tilt">
+            <div class="name">Summer Pack</div>
+            <div class="price"><strong>€75</strong><span>5 rides</span></div>
+            <ul class="bullets">
+              <li>5× 45' ride</li>
+              <li>Flexibel over 30 dagen</li>
+              <li>Beste value voor vakantie</li>
+            </ul>
+            <div class="plan-cta">
+              <button class="btn primary magnetic" data-pickpack="Summer Pack">Kies Summer Pack</button>
+              <button class="btn sea magnetic" id="openWaitlistPacks">Join waitlist</button>
+            </div>
+          </article>
+
+          <article class="plan tilt">
+            <div class="name">10-Ride</div>
+            <div class="price"><strong>€140</strong><span>10 rides</span></div>
+            <ul class="bullets">
+              <li>10× 45' ride</li>
+              <li>60 dagen geldig</li>
+              <li>Voor locals + seizoensmensen</li>
+            </ul>
+            <div class="plan-cta">
+              <button class="btn primary magnetic" data-pickpack="10-Ride">Kies 10-Ride</button>
+              <a class="btn magnetic" href="#join">Vraag info</a>
+            </div>
+          </article>
+
+          <article class="plan tilt">
+            <div class="name">Unlimited Month</div>
+            <div class="price"><strong>€129</strong><span>30 dagen</span></div>
+            <ul class="bullets">
+              <li>Onbeperkt rides</li>
+              <li>Priority booking</li>
+              <li>Perfect als je “hier woont”</li>
+            </ul>
+            <div class="plan-cta">
+              <button class="btn primary magnetic" data-pickpack="Unlimited Month">Kies Unlimited</button>
+              <a class="btn magnetic" href="#schedule">Boek nu</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid3" style="margin-top:14px;">
+          <div class="card tilt" style="background-image:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.12)), var(--img-bike-close); background-size:cover; background-position:center;">
+            <div class="tag"><i></i> Studio vibe</div>
+            <p>Low light, high focus. Jij + muziek + ritme.</p>
+          </div>
+          <div class="card tilt">
+            <div class="tag"><i class="sea"></i> Levels</div>
+            <p>Beginner, Classic, Performance. Jij kiest je intensiteit.</p>
+          </div>
+          <div class="card tilt">
+            <div class="tag"><i></i> Community</div>
+            <p>Vakantiegangers én locals. Na de ride: koffie, geen verplichtingen.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="location">
+      <div class="container reveal">
+        <h2>Jávea / Xàbia</h2>
+        <p class="hint">Zet ‘m centraal. Dicht bij Arenal / Port is ideaal voor early riders.</p>
+
+        <div class="loc">
+          <div class="map tilt" aria-label="Map">
+            <!-- OpenStreetMap embed (geen API key nodig) -->
+            <iframe
+              title="Map Xàbia"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-0.215%2C38.781%2C0.270%2C38.870&layer=mapnik"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+
+          <div class="loc-card tilt">
+            <div class="img" role="img" aria-label="Xàbia view"></div>
+            <div class="body">
+              <h3>Find us</h3>
+              <p><b>Conceptlocatie:</b> Xàbia (Arenal / Port area). Parkeren + lopen. Easy.</p>
+              <p style="opacity:.92;">
+                Wil je dit concreet maken? Vervang hieronder met je echte adres + WhatsApp.
+              </p>
+
+              <div class="list">
+                <div><span><b>Adres</b> (placeholder)</span><span class="spot">Carrer ___, Xàbia</span></div>
+                <div><span><b>WhatsApp</b> (placeholder)</span><span class="spot">+34 ___</span></div>
+                <div><span><b>IG</b> (placeholder)</span><span class="spot">@montgoride</span></div>
+              </div>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;">
+                <a class="btn primary magnetic" href="#schedule">Boek een ride</a>
+                <button class="btn magnetic" id="openWaitlistLoc">Join waitlist</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="join">
+      <div class="container reveal">
+        <div class="join tilt">
+          <div>
+            <h2>Join the waitlist</h2>
+            <p>Als eerste toegang tot launch + opening deals. Geen spam. Alleen launch.</p>
+          </div>
+
+          <form id="waitlist">
+            <input type="email" name="email" placeholder="jij@voorbeeld.nl" required />
+            <button class="btn sea magnetic" type="submit">Join</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container foot">
+        <div>© <span id="year"></span> <strong>MONTGÓ RIDE</strong></div>
+        <div style="opacity:.9;">Jávea / Xàbia • 45' Sunrise Cycling</div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Booking Modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Boek je ride">
+      <div class="top">
+        <strong>Boek je bike</strong>
+        <button class="x" id="closeModal" aria-label="Sluiten">✕</button>
+      </div>
+      <div class="body">
+        <div class="summary" id="bookingSummary"></div>
+
+        <div class="row">
+          <input id="bookName" type="text" placeholder="Naam" autocomplete="name" />
+          <input id="bookEmail" type="email" placeholder="Email" autocomplete="email" />
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn primary magnetic" id="confirmBooking">Confirm booking</button>
+          <button class="btn magnetic" id="cancelBooking">Cancel</button>
+        </div>
+
+        <div style="color: var(--wf); font-weight: 750; font-size: 12px; line-height:1.4;">
+          * Demo booking (zonder backend). Later koppel je dit aan bv. Momence / Mindbody / Glofox / Stripe.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Mobile menu
+    const burger = document.getElementById('burger');
+    const mobile = document.getElementById('mobile');
+    burger?.addEventListener('click', () => {
+      const isOpen = mobile.style.display === 'block';
+      mobile.style.display = isOpen ? 'none' : 'block';
+      burger.setAttribute('aria-expanded', String(!isOpen));
+    });
+    mobile?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mobile.style.display = 'none';
+      burger?.setAttribute('aria-expanded', 'false');
+    }));
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Reveal on scroll
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.14 });
+    revealEls.forEach(el => io.observe(el));
+
+    // Cursor glow follow
+    if(!prefersReduced){
+      const glow = document.querySelector('.cursor-glow');
+      let tx = window.innerWidth * 0.5, ty = window.innerHeight * 0.25;
+      let x = tx, y = ty;
+
+      window.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; });
+
+      const loop = () => {
+        x += (tx - x) * 0.12;
+        y += (ty - y) * 0.12;
+        if(glow) glow.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+        requestAnimationFrame(loop);
+      };
+      loop();
+
+      // Magnetic buttons
+      document.querySelectorAll('.magnetic').forEach(el => {
+        const strength = 10;
+        el.addEventListener('mousemove', (e) => {
+          const r = el.getBoundingClientRect();
+          const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+          const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+          el.style.setProperty('--mx', `${dx * strength}px`);
+          el.style.setProperty('--my', `${dy * strength}px`);
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.setProperty('--mx', `0px`);
+          el.style.setProperty('--my', `0px`);
+        });
+      });
+
+      // Tilt
+      document.querySelectorAll('.tilt').forEach(card => {
+        const max = 8;
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          const rx = (max / 2) - (py * max);
+          const ry = (px * max) - (max / 2);
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
+        });
+      });
+    }
+
+    // Toast helper
+    function toast(msg){
+      let t = document.getElementById('toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.style.position = 'fixed';
+        t.style.left = '50%';
+        t.style.bottom = '22px';
+        t.style.transform = 'translateX(-50%)';
+        t.style.padding = '12px 14px';
+        t.style.borderRadius = '999px';
+        t.style.background = 'rgba(255,255,255,.18)';
+        t.style.border = '1px solid rgba(255,255,255,.40)';
+        t.style.color = 'rgba(255,255,255,.95)';
+        t.style.fontWeight = '950';
+        t.style.backdropFilter = 'blur(14px)';
+        t.style.boxShadow = '0 20px 60px rgba(0,0,0,.18)';
+        t.style.zIndex = '1000';
+        t.style.transition = 'opacity .25s ease';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = '1';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+    }
+
+    // Waitlist demo
+    const waitlist = document.getElementById('waitlist');
+    waitlist?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = waitlist.querySelector('input')?.value?.trim();
+      if(!email) return;
+      localStorage.setItem('montgo_waitlist_email', email);
+      waitlist.reset();
+      toast('Je staat op de lijst ✨');
+    });
+
+    // Quick-open waitlist buttons
+    const openWaitlist = () => document.querySelector('#join')?.scrollIntoView({behavior:'smooth', block:'start'});
+    document.getElementById('openWaitlistTop')?.addEventListener('click', openWaitlist);
+    document.getElementById('openWaitlistPacks')?.addEventListener('click', openWaitlist);
+    document.getElementById('openWaitlistLoc')?.addEventListener('click', openWaitlist);
+
+    // Schedule data (pas aan)
+    const days = [
+      { key:'Mon', label:'Mon' }, { key:'Tue', label:'Tue' }, { key:'Wed', label:'Wed' },
+      { key:'Thu', label:'Thu' }, { key:'Fri', label:'Fri' }, { key:'Sat', label:'Sat' }, { key:'Sun', label:'Sun' }
+    ];
+
+    const schedule = [
+      { day:'Mon', time:'07:00', name:'Sunrise Classic', note:'45 min • music-led', spots: 7 },
+      { day:'Mon', time:'08:00', name:'Beginner Ride', note:'technique • chill start', spots: 9 },
+      { day:'Tue', time:'07:00', name:'Sunrise Classic', note:'45 min • sweat', spots: 6 },
+      { day:'Tue', time:'08:00', name:'Performance', note:'intervals • power', spots: 5 },
+      { day:'Wed', time:'07:00', name:'Sunrise Classic', note:'45 min • vibe', spots: 8 },
+      { day:'Wed', time:'08:00', name:'Hills + Sprints', note:'legs • lungs', spots: 6 },
+      { day:'Thu', time:'07:00', name:'Sunrise Classic', note:'45 min • reset', spots: 7 },
+      { day:'Thu', time:'08:00', name:'Core on Bike', note:'upper + core', spots: 10 },
+      { day:'Fri', time:'07:00', name:'Sunrise Classic', note:'45 min • beach day', spots: 4 },
+      { day:'Fri', time:'08:00', name:'Playlist Ride', note:'request tracks', spots: 8 },
+      { day:'Sat', time:'08:00', name:'Weekend Classic', note:'45 min • group', spots: 3 },
+      { day:'Sat', time:'09:00', name:'Beginner Ride', note:'easy intro', spots: 10 },
+      { day:'Sun', time:'08:30', name:'Sunday Reset', note:'steady • smooth', spots: 9 },
+    ];
+
+    // Render filters
+    const filterWrap = document.getElementById('dayFilters');
+    const classesWrap = document.getElementById('classes');
+
+    let activeDay = (() => {
+      // default: today-ish
+      const idx = (new Date().getDay() + 6) % 7; // Mon=0
+      return days[idx].key;
+    })();
+
+    function renderFilters(){
+      filterWrap.innerHTML = '';
+      days.forEach(d => {
+        const b = document.createElement('button');
+        b.className = 'chip' + (d.key === activeDay ? ' on' : '');
+        b.type = 'button';
+        b.textContent = d.label;
+        b.addEventListener('click', () => {
+          activeDay = d.key;
+          renderFilters();
+          renderClasses();
+        });
+        filterWrap.appendChild(b);
+      });
+    }
+
+    function renderClasses(){
+      classesWrap.innerHTML = '';
+      const items = schedule.filter(s => s.day === activeDay);
+      if(!items.length){
+        const empty = document.createElement('div');
+        empty.className = 'class';
+        empty.innerHTML = `<div class="left"><div class="time">—</div><div class="meta"><strong>No rides</strong><span>Nieuwe slots komen snel.</span></div></div>
+                           <span class="spot">soon</span>`;
+        classesWrap.appendChild(empty);
+        return;
+      }
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'class';
+        row.innerHTML = `
+          <div class="left">
+            <div class="time">${item.time}</div>
+            <div class="meta">
+              <strong>${item.name}</strong>
+              <span>${item.note}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="spot">${item.spots} spots</span>
+            <button class="btn primary magnetic" style="padding:10px 12px;" type="button">Book</button>
+          </div>
+        `;
+        row.querySelector('button')?.addEventListener('click', () => openBooking(item));
+        classesWrap.appendChild(row);
+      });
+    }
+
+    renderFilters();
+    renderClasses();
+
+    // Book next button picks earliest class for active day
+    document.getElementById('bookNextBtn')?.addEventListener('click', () => {
+      const items = schedule.filter(s => s.day === activeDay).sort((a,b) => a.time.localeCompare(b.time));
+      if(items[0]) openBooking(items[0]);
+      else toast('Geen ride op deze dag (nog).');
+    });
+
+    // Packs pick
+    document.querySelectorAll('[data-pickpack]').forEach(btn => {
+      btn.addEventListener('click', () => toast(`Pack gekozen: ${btn.getAttribute('data-pickpack')} ✅`));
+    });
+
+    // Modal booking
+    const modal = document.getElementById('modal');
+    const bookingSummary = document.getElementById('bookingSummary');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelBookingBtn = document.getElementById('cancelBooking');
+    const confirmBookingBtn = document.getElementById('confirmBooking');
+
+    let selected = null;
+
+    function openBooking(item){
+      selected = item;
+      bookingSummary.innerHTML = `
+        <span><b>${item.day}</b> • ${item.time}</span>
+        <span>${item.name} • <b>45'</b></span>
+        <span style="opacity:.9;">${item.note}</span>
+      `;
+      modal.style.display = 'flex';
+      // focus
+      setTimeout(() => document.getElementById('bookName')?.focus(), 50);
+    }
+
+    function closeBooking(){
+      modal.style.display = 'none';
+      selected = null;
+      document.getElementById('bookName').value = '';
+      document.getElementById('bookEmail').value = '';
+    }
+
+    closeModalBtn?.addEventListener('click', closeBooking);
+    cancelBookingBtn?.addEventListener('click', closeBooking);
+    modal?.addEventListener('click', (e) => { if(e.target === modal) closeBooking(); });
+    window.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.style.display === 'flex') closeBooking(); });
+
+    confirmBookingBtn?.addEventListener('click', () => {
+      if(!selected) return;
+      const name = document.getElementById('bookName').value.trim();
+      const email = document.getElementById('bookEmail').value.trim();
+      if(!name || !email) return toast('Vul naam + email in.');
+      // demo store
+      const bookings = JSON.parse(localStorage.getItem('montgo_bookings') || '[]');
+      bookings.push({ ...selected, name, email, ts: Date.now() });
+      localStorage.setItem('montgo_bookings', JSON.stringify(bookings));
+      closeBooking();
+      toast('Booking bevestigd 🔥');
+    });
+  </script>
+</body>
+</html>
