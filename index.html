@@ -821,7 +821,8 @@
       flex-wrap: wrap;
       justify-content:flex-end;
     }
-    input{
+    input,
+    select{
       flex: 1 1 220px;
       padding: 14px 14px;
       border-radius: 999px;
@@ -832,6 +833,15 @@
       outline: none;
     }
     input::placeholder{ color: rgba(255,255,255,.70); }
+    select{
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,.85) 50%),
+                        linear-gradient(135deg, rgba(255,255,255,.85) 50%, transparent 50%);
+      background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 38px;
+    }
 
     footer{
       padding: 26px 0 44px 0;
@@ -1268,6 +1278,11 @@
         <div class="summary" id="bookingSummary"></div>
 
         <div class="row">
+          <select id="bookDay" aria-label="Kies dag"></select>
+          <select id="bookTime" aria-label="Kies tijd"></select>
+        </div>
+
+        <div class="row">
           <input id="bookName" type="text" placeholder="Naam" autocomplete="name" />
           <input id="bookEmail" type="email" placeholder="Email" autocomplete="email" />
         </div>
@@ -1511,16 +1526,71 @@
     const closeModalBtn = document.getElementById('closeModal');
     const cancelBookingBtn = document.getElementById('cancelBooking');
     const confirmBookingBtn = document.getElementById('confirmBooking');
+    const bookDay = document.getElementById('bookDay');
+    const bookTime = document.getElementById('bookTime');
 
     let selected = null;
 
+    function fillDayOptions(){
+      bookDay.innerHTML = '';
+      days.forEach(d => {
+        const option = document.createElement('option');
+        option.value = d.key;
+        option.textContent = d.label;
+        bookDay.appendChild(option);
+      });
+    }
+
+    function fillTimeOptions(day, preferredTime){
+      bookTime.innerHTML = '';
+      const times = schedule.filter(s => s.day === day).map(s => s.time);
+      if(!times.length){
+        const empty = document.createElement('option');
+        empty.value = '';
+        empty.textContent = 'Geen tijden';
+        empty.disabled = true;
+        empty.selected = true;
+        bookTime.appendChild(empty);
+        return;
+      }
+      times.forEach(time => {
+        const option = document.createElement('option');
+        option.value = time;
+        option.textContent = time;
+        if(preferredTime && time === preferredTime) option.selected = true;
+        bookTime.appendChild(option);
+      });
+      if(!bookTime.value && times.length) bookTime.value = times[0];
+    }
+
+    function updateSummary(){
+      const day = bookDay.value;
+      const time = bookTime.value;
+      const item = schedule.find(s => s.day === day && s.time === time);
+      if(item){
+        selected = item;
+        bookingSummary.innerHTML = `
+          <span><b>${item.day}</b> • ${item.time}</span>
+          <span>${item.name} • <b>45'</b></span>
+          <span style="opacity:.9;">${item.note}</span>
+        `;
+      } else {
+        selected = null;
+        bookingSummary.innerHTML = `
+          <span><b>${day}</b> • ${time || '—'}</span>
+          <span>Kies een ride</span>
+          <span style="opacity:.9;">Nieuwe slots komen snel.</span>
+        `;
+      }
+    }
+
     function openBooking(item){
-      selected = item;
-      bookingSummary.innerHTML = `
-        <span><b>${item.day}</b> • ${item.time}</span>
-        <span>${item.name} • <b>45'</b></span>
-        <span style="opacity:.9;">${item.note}</span>
-      `;
+      fillDayOptions();
+      const day = item?.day || activeDay;
+      const time = item?.time;
+      bookDay.value = day;
+      fillTimeOptions(day, time);
+      updateSummary();
       modal.style.display = 'flex';
       // focus
       setTimeout(() => document.getElementById('bookName')?.focus(), 50);
@@ -1533,13 +1603,19 @@
       document.getElementById('bookEmail').value = '';
     }
 
+    bookDay?.addEventListener('change', () => {
+      fillTimeOptions(bookDay.value);
+      updateSummary();
+    });
+    bookTime?.addEventListener('change', updateSummary);
+
     closeModalBtn?.addEventListener('click', closeBooking);
     cancelBookingBtn?.addEventListener('click', closeBooking);
     modal?.addEventListener('click', (e) => { if(e.target === modal) closeBooking(); });
     window.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modal.style.display === 'flex') closeBooking(); });
 
     confirmBookingBtn?.addEventListener('click', () => {
-      if(!selected) return;
+      if(!selected) return toast('Kies een beschikbare ride.');
       const name = document.getElementById('bookName').value.trim();
       const email = document.getElementById('bookEmail').value.trim();
       if(!name || !email) return toast('Vul naam + email in.');
